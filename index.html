@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>В каком режиме ты чаще всего?</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #FDF7F4;
+    --surface: #FFFFFF;
+    --pink: #E8527A;
+    --pink-light: #F9DCE5;
+    --pink-pale: #FEF0F5;
+    --lavender: #C4B8E8;
+    --lavender-light: #EDE9F9;
+    --text: #2A1F1A;
+    --text-mid: #7A5F55;
+    --text-light: #B09080;
+    --border: #EDE0D8;
+    --green: #5A8A6A;
+    --green-light: #E8F4EC;
+    --orange: #C46A3A;
+    --orange-light: #F9EBE0;
+    --blue: #4A6A9A;
+    --blue-light: #E0EAF6;
+  }
+  body { font-family: 'Jost', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-weight: 300; }
+  .page { max-width: 700px; margin: 0 auto; padding: 0 24px 80px; }
+
+  .hero { padding: 60px 0 44px; text-align: center; border-bottom: 1px solid var(--border); margin-bottom: 44px; }
+  .hero-tag { font-size: 11px; font-weight: 400; letter-spacing: 0.2em; text-transform: uppercase; color: var(--pink); margin-bottom: 18px; }
+  .hero h1 { font-family: 'Cormorant Garamond', serif; font-size: clamp(36px, 8vw, 54px); font-weight: 300; line-height: 1.15; color: var(--text); margin-bottom: 18px; }
+  .hero h1 em { font-style: italic; color: var(--pink); }
+  .hero-desc { font-size: 15px; color: var(--text-mid); line-height: 1.7; max-width: 480px; margin: 0 auto 28px; }
+  .author { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-light); }
+  .author-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--pink-light); }
+
+  .how-block { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 22px 26px; margin-bottom: 40px; }
+  .how-block p { font-size: 14px; color: var(--text-mid); margin-bottom: 14px; line-height: 1.6; }
+  .how-block p strong { color: var(--text); font-weight: 400; }
+  .scale-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .scale-item { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--text-mid); }
+  .scale-badge { width: 28px; height: 28px; border-radius: 8px; background: var(--lavender-light); color: var(--blue); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 400; flex-shrink: 0; }
+
+  .progress-bar { position: sticky; top: 0; z-index: 10; background: var(--bg); padding: 10px 0; margin-bottom: 32px; border-bottom: 1px solid var(--border); }
+  .progress-inner { display: flex; align-items: center; gap: 14px; }
+  .progress-track { flex: 1; height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--pink); border-radius: 2px; transition: width 0.4s ease; }
+  .progress-text { font-size: 12px; color: var(--text-light); white-space: nowrap; }
+
+  .block-header { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; padding: 14px 18px; border-radius: 10px; }
+  .block-header.a { background: var(--green-light); }
+  .block-header.b { background: var(--orange-light); }
+  .block-header.c { background: var(--blue-light); }
+  .block-letter { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 400; flex-shrink: 0; }
+  .block-letter.a { background: var(--green); color: white; }
+  .block-letter.b { background: var(--orange); color: white; }
+  .block-letter.c { background: var(--blue); color: white; }
+  .block-name { font-size: 14px; font-weight: 400; color: var(--text); }
+  .block-sub { font-size: 12px; color: var(--text-mid); margin-top: 2px; }
+
+  .question-block { margin-bottom: 28px; padding-bottom: 28px; border-bottom: 1px solid var(--border); animation: fadeIn 0.35s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  .q-num { font-size: 11px; font-weight: 400; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-light); margin-bottom: 8px; }
+  .q-text { font-family: 'Cormorant Garamond', serif; font-size: 21px; font-weight: 400; line-height: 1.4; color: var(--text); margin-bottom: 16px; }
+  .options { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .option { display: flex; align-items: center; gap: 10px; padding: 11px 14px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; transition: all 0.18s; background: var(--surface); font-size: 13px; color: var(--text-mid); font-family: 'Jost', sans-serif; font-weight: 300; }
+  .option:hover { border-color: var(--pink-light); background: var(--pink-pale); }
+  .option.selected { border-color: var(--pink); background: var(--pink-pale); color: var(--text); }
+  .opt-dot { width: 7px; height: 7px; border-radius: 50%; border: 1.5px solid var(--border); flex-shrink: 0; transition: all 0.18s; }
+  .option.selected .opt-dot { background: var(--pink); border-color: var(--pink); }
+
+  .submit-btn { width: 100%; padding: 17px; background: var(--pink); color: white; border: none; border-radius: 10px; font-family: 'Jost', sans-serif; font-size: 15px; font-weight: 400; letter-spacing: 0.04em; cursor: pointer; transition: all 0.2s; margin-top: 16px; }
+  .submit-btn:hover { background: #C43060; }
+  .submit-btn:disabled { background: var(--border); color: var(--text-light); cursor: not-allowed; }
+
+  .result-section { display: none; animation: fadeIn 0.6s ease; }
+  .result-hero { text-align: center; padding: 52px 0 40px; border-bottom: 1px solid var(--border); margin-bottom: 40px; }
+  .result-tag { font-size: 11px; font-weight: 400; letter-spacing: 0.2em; text-transform: uppercase; color: var(--pink); margin-bottom: 16px; }
+  .result-title { font-family: 'Cormorant Garamond', serif; font-size: 36px; font-weight: 400; color: var(--text); margin-bottom: 12px; }
+  .result-sub { font-size: 13px; color: var(--text-mid); margin-bottom: 24px; }
+  .result-desc { font-size: 15px; color: var(--text-mid); line-height: 1.75; max-width: 520px; margin: 0 auto; }
+
+  .scores-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 32px 0; }
+  .score-card { padding: 18px 14px; border-radius: 12px; text-align: center; border: 1px solid transparent; }
+  .score-card.dominant { border-width: 2px; }
+  .score-card.a { background: var(--green-light); border-color: #BDDDC8; }
+  .score-card.a.dominant { border-color: var(--green); }
+  .score-card.b { background: var(--orange-light); border-color: #EDD0BC; }
+  .score-card.b.dominant { border-color: var(--orange); }
+  .score-card.c { background: var(--blue-light); border-color: #BCCDE8; }
+  .score-card.c.dominant { border-color: var(--blue); }
+  .score-letter { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 400; margin-bottom: 4px; }
+  .score-card.a .score-letter { color: var(--green); }
+  .score-card.b .score-letter { color: var(--orange); }
+  .score-card.c .score-letter { color: var(--blue); }
+  .score-num { font-size: 24px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+  .score-label { font-size: 11px; color: var(--text-light); letter-spacing: 0.05em; }
+  .score-badge { display: inline-block; font-size: 10px; font-weight: 400; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 8px; border-radius: 100px; margin-top: 6px; }
+  .score-card.a .score-badge { background: var(--green); color: white; }
+  .score-card.b .score-badge { background: var(--orange); color: white; }
+  .score-card.c .score-badge { background: var(--blue); color: white; }
+
+  .insight-block { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 26px; margin: 24px 0; }
+  .insight-block h3 { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 400; color: var(--text); margin-bottom: 12px; }
+  .insight-block p { font-size: 14px; color: var(--text-mid); line-height: 1.7; }
+  .insight-block p + p { margin-top: 10px; }
+
+  .note-block { background: var(--pink-pale); border: 1px solid var(--pink-light); border-left: 3px solid var(--pink); border-radius: 0 10px 10px 0; padding: 18px 22px; margin: 24px 0; font-size: 14px; color: var(--text-mid); line-height: 1.7; }
+
+
+
+  .email-block { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 28px; margin: 28px 0; }
+  .email-block h3 { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 400; color: var(--text); margin-bottom: 8px; }
+  .email-block p { font-size: 13px; color: var(--text-mid); margin-bottom: 16px; line-height: 1.6; }
+  .email-row { display: flex; gap: 10px; }
+  .email-input { flex: 1; padding: 12px 16px; border: 1px solid var(--border); border-radius: 8px; font-family: 'Jost', sans-serif; font-size: 14px; color: var(--text); background: white; outline: none; transition: border-color 0.2s; }
+  .email-input:focus { border-color: var(--pink); }
+  .email-btn { padding: 12px 20px; background: var(--text); color: white; border: none; border-radius: 8px; font-family: 'Jost', sans-serif; font-size: 14px; cursor: pointer; white-space: nowrap; transition: background 0.2s; }
+  .email-btn:hover { background: var(--pink); }
+  .email-ok { display: none; font-size: 14px; color: var(--green); padding: 12px; background: var(--green-light); border-radius: 8px; text-align: center; margin-top: 10px; }
+
+  .disclaimer { font-size: 12px; color: var(--text-light); line-height: 1.65; text-align: center; margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--border); }
+  .restart-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-light); cursor: pointer; margin-top: 24px; background: none; border: none; font-family: 'Jost', sans-serif; text-decoration: underline; text-underline-offset: 3px; transition: color 0.2s; }
+  .restart-btn:hover { color: var(--pink); }
+
+  @media (max-width: 500px) {
+    .options, .scale-grid { grid-template-columns: 1fr; }
+    .scores-grid { grid-template-columns: 1fr; }
+    .email-row { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+<div id="test-section">
+  <div class="hero">
+    <p class="hero-tag">Самодиагностика</p>
+    <h1>В каком режиме<br>ты <em>чаще всего</em>?</h1>
+    <p class="hero-desc">Узнай, где сейчас находится твоя нервная система — всего 3 блока вопросов и 5 минут честности с собой.</p>
+    <div class="author">
+      <div class="author-dot"></div>
+      <span>Психолог Ирина Рулева · @irina.ruleva.psy</span>
+      <div class="author-dot"></div>
+    </div>
+  </div>
+
+  <div class="how-block">
+    <p>Прочитай каждое утверждение и отметь, насколько часто ты это переживаешь за <strong>последние 2 недели</strong>.</p>
+    <div class="scale-grid">
+      <div class="scale-item"><div class="scale-badge">0</div><span>Почти никогда</span></div>
+      <div class="scale-item"><div class="scale-badge">1</div><span>Иногда</span></div>
+      <div class="scale-item"><div class="scale-badge">2</div><span>Часто</span></div>
+      <div class="scale-item"><div class="scale-badge">3</div><span>Почти всегда</span></div>
+    </div>
+  </div>
+
+  <div class="progress-bar">
+    <div class="progress-inner">
+      <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+      <span class="progress-text" id="progress-text">0 из 24</span>
+    </div>
+  </div>
+
+  <div id="questions-container"></div>
+
+  <button class="submit-btn" id="submit-btn" disabled onclick="showResult()">Узнать результат</button>
+</div>
+
+<div id="result-section" class="result-section"></div>
+</div>
+
+<script>
+const blocks = [
+  {
+    id: "a",
+    letter: "А",
+    name: "Блок А",
+    sub: "Режим безопасности и включённости",
+    questions: [
+      "Я чувствую себя спокойной, но энергичной — могу и работать, и отдыхать",
+      "Мне легко поддерживать разговор, слушать и быть услышанной",
+      "Я с интересом берусь за дела и доделываю их",
+      "Я засыпаю без долгих мучений и просыпаюсь отдохнувшей",
+      "Мне комфортно быть рядом с людьми — я чувствую связь",
+      "Я могу сказать «нет» без сильного чувства вины",
+      "Я замечаю приятные мелочи — вкус еды, солнце, тёплый голос",
+      "Я справляюсь с неожиданностями без паники и ступора"
+    ]
+  },
+  {
+    id: "b",
+    letter: "Б",
+    name: "Блок Б",
+    sub: "Режим мобилизации — бей / беги",
+    questions: [
+      "Я чувствую внутреннее напряжение, которое не уходит",
+      "Я легко раздражаюсь — мелочи вызывают непропорциональную реакцию",
+      "Мысли крутятся по кругу — я прокручиваю одни и те же ситуации",
+      "Мне сложно заснуть — тело «на взводе», голова не отключается",
+      "Я тороплюсь, даже когда объективно спешить некуда",
+      "Я чувствую, что мне нужно всё контролировать, иначе что-то случится",
+      "У меня напряжены плечи, челюсть или сжаты кулаки — часто замечаю это",
+      "Мне сложно слушать других — хочется перебить, ответить, «решить»"
+    ]
+  },
+  {
+    id: "c",
+    letter: "В",
+    name: "Блок В",
+    sub: "Режим иммобилизации — замирание / отключение",
+    questions: [
+      "Я чувствую пустоту — нет ни радости, ни грусти, просто ничего",
+      "У меня нет сил — даже простые дела кажутся непосильными",
+      "Я избегаю людей, отменяю планы, хочу спрятаться",
+      "Мне сложно сосредоточиться — «туман» в голове, забываю простые вещи",
+      "Я часами залипаю в телефон или сериалы, не замечая времени",
+      "Я чувствую, что отключена от своего тела — как будто смотрю на жизнь со стороны",
+      "У меня ощущение «какой смысл?» — ничего не хочется, ничего не важно",
+      "Мне кажется, что я застряла и не могу сдвинуться с места"
+    ]
+  }
+];
+
+const allAnswers = {};
+let totalQuestions = 0;
+
+blocks.forEach(b => {
+  b.questions.forEach((q, i) => {
+    allAnswers[b.id + "_" + i] = null;
+    totalQuestions++;
+  });
+});
+
+function getLevel(score) {
+  if (score <= 8) return "редко активен";
+  if (score <= 16) return "заметно присутствует";
+  return "доминирует";
+}
+
+function getResultData(scores) {
+  const max = Math.max(scores.a, scores.b, scores.c);
+  let dominant = "a";
+  if (scores.b === max && scores.b >= scores.a && scores.b >= scores.c) dominant = "b";
+  if (scores.c === max && scores.c >= scores.a && scores.c >= scores.b) dominant = "c";
+  if (scores.b === max && scores.b === scores.a) dominant = "b";
+  if (scores.c === max && scores.c === scores.b) dominant = "c";
+
+  const data = {
+    a: {
+      title: "Режим безопасности и включённости",
+      desc: "Твоя нервная система сейчас чаще всего находится в состоянии спокойной активности. Ты можешь и работать, и отдыхать, и быть в контакте с людьми. Это ресурсное состояние — и его стоит беречь и укреплять.",
+      insight: "Это не значит, что у тебя нет трудностей. Это значит, что нервная система справляется и имеет доступ к восстановлению. Лучшее время, чтобы освоить инструменты регуляции — именно сейчас, пока есть ресурс.",
+      cta: ""
+    },
+    b: {
+      title: "Режим мобилизации — бей и беги",
+      desc: "Нервная система сейчас чаще всего находится в состоянии повышенной готовности. Напряжение, тревога, сложность с расслаблением — это не слабость характера, это физиология.",
+      insight: "В этом режиме тело готовится к угрозе, даже если реальной угрозы нет. Хроническое пребывание здесь истощает ресурс. Хорошая новость: нервная система обучаема. Из этого состояния выходят — с правильной поддержкой.",
+      cta: ""
+    },
+    c: {
+      title: "Режим иммобилизации — замирание и отключение",
+      desc: "Нервная система сейчас чаще всего находится в режиме «выключения». Пустота, апатия, ощущение тумана — это защитная реакция системы, которая слишком долго была перегружена.",
+      insight: "Этот режим — не лень и не депрессия характера. Это нервная система, которая истощила ресурс мобилизации и перешла в режим экономии. Из него выходят — медленно, бережно, с поддержкой. Первый шаг — признать, где ты находишься. Ты уже это сделала.",
+      cta: ""
+    }
+  };
+  return { dominant, info: data[dominant] };
+}
+
+function buildQuestions() {
+  const container = document.getElementById("questions-container");
+  let globalIdx = 0;
+  blocks.forEach(block => {
+    const bh = document.createElement("div");
+    bh.className = "block-header " + block.id;
+    bh.innerHTML = '<div class="block-letter ' + block.id + '">' + block.letter + '</div><div><div class="block-name">' + block.name + '</div><div class="block-sub">' + block.sub + '</div></div>';
+    container.appendChild(bh);
+
+    block.questions.forEach((q, i) => {
+      globalIdx++;
+      const key = block.id + "_" + i;
+      const div = document.createElement("div");
+      div.className = "question-block";
+      div.innerHTML = '<p class="q-num">Вопрос ' + globalIdx + ' из ' + totalQuestions + '</p><p class="q-text">' + q + '</p><div class="options" id="opts-' + key + '">' +
+        [["Почти никогда",0],["Иногда",1],["Часто",2],["Почти всегда",3]].map(([l,v]) =>
+          '<div class="option" onclick="pick(\'' + key + '\',' + v + ')" id="o-' + key + '-' + v + '"><div class="opt-dot"></div><span>' + l + '</span></div>'
+        ).join("") + '</div>';
+      container.appendChild(div);
+    });
+  });
+}
+
+function pick(key, val) {
+  allAnswers[key] = val;
+  for (let v = 0; v < 4; v++) {
+    const el = document.getElementById("o-" + key + "-" + v);
+    if (el) el.classList.toggle("selected", v === val);
+  }
+  const answered = Object.values(allAnswers).filter(v => v !== null).length;
+  const pct = (answered / totalQuestions) * 100;
+  document.getElementById("progress-fill").style.width = pct + "%";
+  document.getElementById("progress-text").textContent = answered + " из " + totalQuestions;
+  document.getElementById("submit-btn").disabled = answered < totalQuestions;
+}
+
+function calcScores() {
+  const s = { a: 0, b: 0, c: 0 };
+  blocks.forEach(block => {
+    block.questions.forEach((q, i) => {
+      const v = allAnswers[block.id + "_" + i];
+      if (v !== null) s[block.id] += v;
+    });
+  });
+  return s;
+}
+
+function showResult() {
+  const scores = calcScores();
+  const { dominant, info } = getResultData(scores);
+
+  document.getElementById("test-section").style.display = "none";
+  const sec = document.getElementById("result-section");
+  sec.style.display = "block";
+
+  const blockNames = { a: "Блок А", b: "Блок Б", c: "Блок В" };
+  const levelA = getLevel(scores.a);
+  const levelB = getLevel(scores.b);
+  const levelC = getLevel(scores.c);
+
+  sec.innerHTML = `
+    <div class="result-hero">
+      <p class="result-tag">Ваш результат</p>
+      <h2 class="result-title">${info.title}</h2>
+      <p class="result-sub">Доминирующий режим · ${blockNames[dominant]}: ${scores[dominant]} баллов</p>
+      <p class="result-desc">${info.desc}</p>
+    </div>
+
+    <div class="scores-grid">
+      <div class="score-card a ${dominant==="a"?"dominant":""}">
+        <div class="score-letter">А</div>
+        <div class="score-num">${scores.a}</div>
+        <div class="score-label">из 24</div>
+        <div class="score-badge">${levelA}</div>
+      </div>
+      <div class="score-card b ${dominant==="b"?"dominant":""}">
+        <div class="score-letter">Б</div>
+        <div class="score-num">${scores.b}</div>
+        <div class="score-label">из 24</div>
+        <div class="score-badge">${levelB}</div>
+      </div>
+      <div class="score-card c ${dominant==="c"?"dominant":""}">
+        <div class="score-letter">В</div>
+        <div class="score-num">${scores.c}</div>
+        <div class="score-label">из 24</div>
+        <div class="score-badge">${levelC}</div>
+      </div>
+    </div>
+
+    <div class="note-block">0–8 баллов — режим редко активен · 9–16 — заметно присутствует · 17–24 — доминирует<br><br>Это не «диагноз» и не приговор. Используй цифры как компас, а не как оценку.</div>
+
+    <div class="insight-block">
+      <h3>Что это значит</h3>
+      <p>${info.insight}</p>
+      ${scores.b > 8 && scores.c > 8 ? '<p><strong style="font-weight:400;color:var(--text)">Высокие баллы в Б и В одновременно — нормально.</strong> Это тот самый маятник между тревогой и апатией. Многие проживают оба состояния — одно вслед за другим.</p>' : ""}
+      ${scores.a < 9 ? '<p><strong style="font-weight:400;color:var(--text)">Мало баллов в блоке А — не приговор.</strong> Это значит, что нервная система давно не была в безопасности. Это задача для работы, а не повод для стыда.</p>' : ""}
+    </div>
+
+    <div class="insight-block">
+      <h3>Пройди тест снова через несколько недель</h3>
+      <p>После практики ты увидишь, как меняются пропорции. Это живое, изменчивое состояние — не фиксированная черта личности.</p>
+    </div>
+
+    <div class="email-block">
+      <h3>Сохранить результаты</h3>
+      <p>Отправим твой результат на почту — чтобы можно было вернуться к нему позже или поделиться со специалистом.</p>
+      <div class="email-row">
+        <input type="email" class="email-input" id="email-input" placeholder="твой@email.com" />
+        <button class="email-btn" onclick="sendEmail(${scores.a},${scores.b},${scores.c},'${info.title}')">Отправить</button>
+      </div>
+      <div class="email-ok" id="email-ok">Результаты отправлены на почту</div>
+    </div>
+
+    <div class="disclaimer">Честно посмотреть на своё состояние — это уже работа. Этот тест не является клиническим диагнозом. Психолог Ирина Рулева · @irina.ruleva.psy</div>
+
+    <div style="text-align:center;margin-top:24px;">
+      <button class="restart-btn" onclick="restart()">Пройти тест заново</button>
+    </div>
+  `;
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function sendEmail(a, b, c, title) {
+  const email = document.getElementById("email-input").value;
+  if (!email || !email.includes("@")) {
+    document.getElementById("email-input").style.borderColor = "#E8527A";
+    return;
+  }
+  const subj = encodeURIComponent("Результаты теста «В каком режиме ты чаще всего?»");
+  const body = encodeURIComponent(
+    "Результаты теста «В каком режиме ты чаще всего?»\n\n" +
+    "Доминирующий режим: " + title + "\n\n" +
+    "Блок А (безопасность): " + a + " из 24\n" +
+    "Блок Б (мобилизация): " + b + " из 24\n" +
+    "Блок В (иммобилизация): " + c + " из 24\n\n" +
+    "Тест — психолог Ирина Рулева\n" +
+    "@irina.ruleva.psy"
+  );
+  window.location.href = "mailto:" + email + "?subject=" + subj + "&body=" + body;
+  document.getElementById("email-ok").style.display = "block";
+}
+
+function restart() {
+  Object.keys(allAnswers).forEach(k => allAnswers[k] = null);
+  document.getElementById("result-section").style.display = "none";
+  document.getElementById("test-section").style.display = "block";
+  document.getElementById("questions-container").innerHTML = "";
+  document.getElementById("progress-fill").style.width = "0%";
+  document.getElementById("progress-text").textContent = "0 из " + totalQuestions;
+  document.getElementById("submit-btn").disabled = true;
+  buildQuestions();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+buildQuestions();
+</script>
+</body>
+</html>
